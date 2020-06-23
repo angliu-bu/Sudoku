@@ -21,4 +21,4 @@ while run:
 pygame.quit()
 
 
-print("hi men")
+print("hello world")
