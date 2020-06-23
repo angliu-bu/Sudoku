@@ -19,3 +19,6 @@ while run:
     pygame.time.delay(100)
 
 pygame.quit()
+
+
+print("hi men")
