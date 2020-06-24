@@ -3,7 +3,7 @@ import pygame
 pygame.init()
 size = w, h = 550, 550
 black = (0, 0, 0)
-white = (255, 255, 255)
+white = (211, 211, 211)
 red = (255, 0, 0)
 
 window = pygame.display.set_mode(size)
@@ -20,6 +20,7 @@ board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
          [".", "6", ".", ".", ".", ".", "2", "8", "."],
          [".", ".", ".", "4", "1", "9", ".", ".", "5"],
          [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
+
 font = pygame.font.Font('freesansbold.ttf', 20)
 
 for x, row in enumerate(board):
@@ -51,14 +52,14 @@ while run:
             y, x = pygame.mouse.get_pos()
             x, y = x // 50 - 1, y // 50 - 1
 
-            if board[x][y] == '.':
-                pygame.draw.rect(window, red, ((y + 1) * 50, (x + 1) * 50, 50, 50), 5)
-                pygame.display.update()
+            if 0 <= x < 9 and 0 <= y < 9:
+                if board[x][y] == '.':
+                    pygame.draw.rect(window, red, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
+                    pygame.display.update()
 
-                print("you clicked an empty slot")
-            else:
-                print(board[x][y])
-
+                    print("you clicked an empty slot")
+                else:
+                    print(board[x][y])
 
             print("you clicked ", (x, y))
 
