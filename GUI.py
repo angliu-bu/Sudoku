@@ -1,9 +1,10 @@
 import pygame
-
+from Game import Board
+from copy import deepcopy
 pygame.init()
 size = w, h = 550, 550
 black = (0, 0, 0)
-white = (255, 255, 255)
+white = (211, 211, 211)
 red = (255, 0, 0)
 
 window = pygame.display.set_mode(size)
@@ -20,78 +21,51 @@ board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
          [".", "6", ".", ".", ".", ".", "2", "8", "."],
          [".", ".", ".", "4", "1", "9", ".", ".", "5"],
          [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
-font = pygame.font.Font('freesansbold.ttf', 20)
+
+temp = deepcopy(board)
+game = Board(deepcopy(board))
+game.solve()
+
+print(game)
+
+font26 = pygame.font.Font(None, 26)
+font20 = pygame.font.Font(None, 20)
 
 for x, row in enumerate(board):
     for y, value in enumerate(row):
         if value != '.':
-            text = font.render(board[x][y], True, black, white)
+            text = font26.render(board[x][y], True, black, white)
             textRect = text.get_rect()
             textRect.center = ((y * 50) + 75, (x * 50) + 75)
             window.blit(text, textRect)
 
-
-
-
-class InputBox:
-
-    def __init__(self, x, y, w, h, text=''):
-        self.rect = pg.Rect(x, y, w, h)
-        self.color = COLOR_INACTIVE
-        self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
-        self.active = False
-
-    def handle_event(self, event):
-        if event.type == pg.MOUSEBUTTONDOWN:
-            # If the user clicked on the input_box rect.
-            if self.rect.collidepoint(event.pos):
-                # Toggle the active variable.
-                self.active = not self.active
-            else:
-                self.active = False
-            # Change the current color of the input box.
-            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
-        if event.type == pg.KEYDOWN:
-            if self.active:
-                if event.key == pg.K_RETURN:
-                    print(self.text)
-                    self.text = ''
-                elif event.key == pg.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                else:
-                    self.text += event.unicode
-                # Re-render the text.
-                self.txt_surface = FONT.render(self.text, True, self.color)
-
-
-
-    def draw(self, screen):
-        # Blit the text.
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
-        # Blit the rect.
-        pg.draw.rect(screen, self.color, self.rect, 2)
-
-
-
-
-
-
-
-
-
-
-for i, offset in enumerate(range(0, 500, 50)):
-    if i == 3 or i == 6:
-        thickness = 4
-    else:
-        thickness = 2
-    pygame.draw.line(window, black, (50 + offset, 50), (50 + offset, 500), thickness)
-    pygame.draw.line(window, black, (50, 50 + offset), (500, 50 + offset), thickness)
+def drawGrid():
+    for i, offset in enumerate(range(0, 500, 50)):
+        if i == 3 or i == 6:
+            thickness = 4
+        else:
+            thickness = 2
+        pygame.draw.line(window, black, (50 + offset, 50), (50 + offset, 500), thickness)
+        pygame.draw.line(window, black, (50, 50 + offset), (500, 50 + offset), thickness)
 
 # pygame.draw.line(window, black, (400,100), (400,400),5)
 pygame.display.update()
 
+
+def select(x, y):
+    pygame.draw.rect(window, red, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
+
+def deselect(x, y):
+    pygame.draw.rect(window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48), 4)
+    drawGrid()
+
+def clearCell(x, y):
+    pygame.draw.rect(window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48))
+    drawGrid()
+
+drawGrid()
+
+selected = False
 run = True
 while run:
     events = pygame.event.get()
@@ -99,23 +73,56 @@ while run:
 
     for event in events:
         if event.type == pygame.MOUSEBUTTONUP:
+
+            # remove previous selection
+            if selected:
+                deselect(x, y)
+
+            # get new selection
             y, x = pygame.mouse.get_pos()
             x, y = x // 50 - 1, y // 50 - 1
 
-            if board[x][y] == '.':
-                pygame.draw.rect(window, red, ((y + 1) * 50, (x + 1) * 50, 50, 50), 5)
-                pygame.display.update()
+            # display selection
+            if 0 <= x < 9 and 0 <= y < 9:
+                if board[x][y] == '.':
+                    select(x, y)
+                    selected = True
 
-                print("you clicked an empty slot")
-            else:
-                print(board[x][y])
-
+                    print("you clicked an empty slot")
+                else:
+                    print(board[x][y])
 
             print("you clicked ", (x, y))
 
+    if selected:
+        for i, key in enumerate(keys[49:58]):
+            if key:
+                temp[x][y] = str(i + 1)
+
+                clearCell(x, y)
+                select(x, y)
+                text = font20.render(temp[x][y], True, black)
+                textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 64))
+                window.blit(text, textRect)
+
+        if keys[pygame.K_DELETE] and temp[x][y] != '.':
+            clearCell(x, y)
+            select(x, y)
+
+        if keys[pygame.K_RETURN] and temp[x][y] != '.':
+            if game.board[x][y] == temp[x][y]:
+                clearCell(x, y)
+                board[x][y] = temp[x][y]
+                text = font26.render(temp[x][y], True, black, white)
+                textRect = text.get_rect()
+                textRect.center = ((y * 50) + 75, (x * 50) + 75)
+                window.blit(text, textRect)
+            else:
+                print("WRONG")
+    pygame.display.update()
+
     if keys[pygame.K_ESCAPE]:
         run = False
-    pygame.time.delay(100)
+
 
 pygame.quit()
-
