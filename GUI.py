@@ -42,25 +42,29 @@ for i, offset in enumerate(range(0, 500, 50)):
 # pygame.draw.line(window, black, (400,100), (400,400),5)
 pygame.display.update()
 
-run = True
-
 
 def select(x, y, color):
     pygame.draw.rect(window, color, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
 
+
 selected = False
+run = True
 while run:
     events = pygame.event.get()
     keys = pygame.key.get_pressed()
 
     for event in events:
         if event.type == pygame.MOUSEBUTTONUP:
+
+            # remove previous selection
             if selected:
                 select(x, y, white)
 
+            # get new selection
             y, x = pygame.mouse.get_pos()
             x, y = x // 50 - 1, y // 50 - 1
 
+            # display selection
             if 0 <= x < 9 and 0 <= y < 9:
                 if board[x][y] == '.':
                     select(x, y, red)
@@ -77,8 +81,4 @@ while run:
         run = False
     pygame.time.delay(100)
 
-
-
-
 pygame.quit()
-
