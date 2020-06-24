@@ -1,6 +1,7 @@
-import pygame
 from Game import Board
 from copy import deepcopy
+import pygame
+
 pygame.init()
 size = w, h = 550, 550
 black = (0, 0, 0)
@@ -95,9 +96,9 @@ while run:
             print("you clicked ", (x, y))
 
     if selected:
-        for i, key in enumerate(keys[49:58]):
-            if key:
-                temp[x][y] = str(i + 1)
+        for num, pressed in enumerate(keys[49:58]):
+            if pressed:
+                temp[x][y] = str(num + 1)
 
                 clearCell(x, y)
                 select(x, y)
@@ -113,12 +114,16 @@ while run:
             if game.board[x][y] == temp[x][y]:
                 clearCell(x, y)
                 board[x][y] = temp[x][y]
+
                 text = font26.render(temp[x][y], True, black, white)
                 textRect = text.get_rect()
                 textRect.center = ((y * 50) + 75, (x * 50) + 75)
                 window.blit(text, textRect)
             else:
+
                 print("WRONG")
+
+
     pygame.display.update()
 
     if keys[pygame.K_ESCAPE]:
