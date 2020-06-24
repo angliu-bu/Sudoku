@@ -112,7 +112,7 @@ while run:
         if keys[pygame.K_RETURN] and temp[x][y] != '.':
             if game.board[x][y] == temp[x][y]:
                 clearCell(x, y)
-
+                board[x][y] = temp[x][y]
                 text = font20.render(temp[x][y], True, black, white)
                 textRect = text.get_rect()
                 textRect.center = ((y * 50) + 75, (x * 50) + 75)
