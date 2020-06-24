@@ -39,7 +39,7 @@ for x, row in enumerate(board):
             textRect.center = ((y * 50) + 75, (x * 50) + 75)
             window.blit(text, textRect)
 
-def generateBoard():
+def drawGrid():
     for i, offset in enumerate(range(0, 500, 50)):
         if i == 3 or i == 6:
             thickness = 4
@@ -57,13 +57,13 @@ def select(x, y):
 
 def deselect(x, y):
     pygame.draw.rect(window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48), 4)
-    generateBoard()
+    drawGrid()
 
 def clearCell(x, y):
     pygame.draw.rect(window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48))
-    generateBoard()
+    drawGrid()
 
-generateBoard()
+drawGrid()
 
 selected = False
 run = True
