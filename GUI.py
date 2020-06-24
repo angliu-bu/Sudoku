@@ -28,13 +28,13 @@ game.solve()
 
 print(game)
 
-font20 = pygame.font.Font(None, 26)
-font12 = pygame.font.Font(None, 18)
+font26 = pygame.font.Font(None, 26)
+font20 = pygame.font.Font(None, 20)
 
 for x, row in enumerate(board):
     for y, value in enumerate(row):
         if value != '.':
-            text = font20.render(board[x][y], True, black, white)
+            text = font26.render(board[x][y], True, black, white)
             textRect = text.get_rect()
             textRect.center = ((y * 50) + 75, (x * 50) + 75)
             window.blit(text, textRect)
@@ -101,8 +101,8 @@ while run:
 
                 clearCell(x, y)
                 select(x, y)
-                text = font12.render(temp[x][y], True, black)
-                textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 63))
+                text = font20.render(temp[x][y], True, black)
+                textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 64))
                 window.blit(text, textRect)
 
         if keys[pygame.K_DELETE] and temp[x][y] != '.':
@@ -113,7 +113,7 @@ while run:
             if game.board[x][y] == temp[x][y]:
                 clearCell(x, y)
                 board[x][y] = temp[x][y]
-                text = font20.render(temp[x][y], True, black, white)
+                text = font26.render(temp[x][y], True, black, white)
                 textRect = text.get_rect()
                 textRect.center = ((y * 50) + 75, (x * 50) + 75)
                 window.blit(text, textRect)
