@@ -43,18 +43,28 @@ for i, offset in enumerate(range(0, 500, 50)):
 pygame.display.update()
 
 run = True
+
+
+def select(x, y, color):
+    pygame.draw.rect(window, color, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
+
+selected = False
 while run:
     events = pygame.event.get()
     keys = pygame.key.get_pressed()
 
     for event in events:
         if event.type == pygame.MOUSEBUTTONUP:
+            if selected:
+                select(x, y, white)
+
             y, x = pygame.mouse.get_pos()
             x, y = x // 50 - 1, y // 50 - 1
 
             if 0 <= x < 9 and 0 <= y < 9:
                 if board[x][y] == '.':
-                    pygame.draw.rect(window, red, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
+                    select(x, y, red)
+                    selected = True
                     pygame.display.update()
 
                     print("you clicked an empty slot")
@@ -66,6 +76,9 @@ while run:
     if keys[pygame.K_ESCAPE]:
         run = False
     pygame.time.delay(100)
+
+
+
 
 pygame.quit()
 
