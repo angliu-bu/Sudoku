@@ -27,7 +27,7 @@ for x, row in enumerate(board):
         if value != '.':
             text = font.render(board[x][y], True, black, white)
             textRect = text.get_rect()
-            textRect.center = ((x * 50) + 75, (y * 50) + 75)
+            textRect.center = ((y * 50) + 75, (x * 50) + 75)
             window.blit(text, textRect)
 
 for i, offset in enumerate(range(0, 500, 50)):
