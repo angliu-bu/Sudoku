@@ -118,13 +118,5 @@ if __name__ == '__main__':
     Board = GeneratedBoard(40)
     print(Board)
 
-    # genBoard = GenerateBoard()
-#     # genBoard.fill(0, 0, 1)
-#     # genBoard.fillBoard()
-#
-#     genBoard.fillBoard(45)
-#     print(genBoard)
-#     genBoard.solve_board()
-#     print(genBoard)
 
 
