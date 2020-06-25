@@ -14,7 +14,7 @@ class Board:
 
     def __init__(self, board=None):
 
-        self.board, self.solution = self.GeneratedBoard(81)
+        self.board, self.solution = self.GeneratedBoard('easy')
         self.temp = deepcopy(self.board)
 
         # Start the game
@@ -218,13 +218,15 @@ class Board:
 
         solve_board()
 
-    def GeneratedBoard(self, k):
+    def GeneratedBoard(self, d='medium'):
+
+        difficulty = {'easy': 4, 'medium': 5, 'hard': 7}
+
+        count = 81
         board = [['.' for _ in range(9)] for _ in range(9)]
         rows = defaultdict(set)
         cols = defaultdict(set)
         blocks = defaultdict(set)
-        numList = list('123456789')
-        indexList = list('012345678')
 
         def get_choices(r, c):
             choices = []
@@ -243,7 +245,7 @@ class Board:
 
             return min(empty, key=lambda x: len(x[2])) if empty else None
 
-        while k > 0:
+        while count > 0:
             empty = get_empty_cell()
             if empty:
                 r, c, choices = empty
@@ -253,10 +255,10 @@ class Board:
                     rows[r].add(v)
                     cols[c].add(v)
                     blocks[(r // 3, c // 3)].add(v)
-                    k -= 1
+                    count -= 1
 
                 else:
-                    k = 81
+                    count = 81
                     board = [['.' for _ in range(9)] for _ in range(9)]
                     rows = defaultdict(set)
                     cols = defaultdict(set)
@@ -265,9 +267,8 @@ class Board:
         solution = deepcopy(board)
 
         for r in range(9):
-            columns = random.sample(indexList, 5)
+            columns = random.sample('012345678', difficulty[d])
             for c in columns:
                 c = int(c)
-                # print(board[r][c])
                 board[r][c] = '.'
         return board, solution
