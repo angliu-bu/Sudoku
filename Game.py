@@ -1,13 +1,14 @@
 import random
 from collections import defaultdict
 from copy import deepcopy
-
+import time
 import pygame
 
 black = (0, 0, 0)
 white = (211, 211, 211)
 red = (255, 0, 0)
 green = (21, 119, 40)
+
 
 
 class Game:
@@ -27,7 +28,7 @@ class Game:
         self.font20 = pygame.font.Font(None, 20)
 
         # Create window
-        self.window = pygame.display.set_mode(size=(550, 550))
+        self.window = pygame.display.set_mode(size=(750, 550))
         self.window.fill(white)
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
@@ -57,15 +58,45 @@ class Game:
             res += '\n'
         return res
 
-    def run(self):
 
+    def run(self):
+        clock = pygame.time.Clock()
+        button1 = pygame.Rect(600, 200, 100, 50)
+        button2 = pygame.Rect(600, 400, 100, 50)
         selected = False
         run = True
+        click = False
         while run:
             events = pygame.event.get()
             keys = pygame.key.get_pressed()
 
+            # x, y = pygame.mouse.get_pos()
+            #
+            # # check for clinking bottoms
+            # if button1.collidepoint((x, y)):
+            #     if click:
+            #         pass
+            # if button2.collidepoint((x, y)):
+            #     if click:
+            #         pass
+            pygame.draw.rect(self.window, (200, 0, 0), button1)
+            pygame.draw.rect(self.window, (200, 100, 0), button2)
+
+            text1 = self.font26.render('Level', True, black, white)
+            textRect1 = text1.get_rect(center=(600 + 50, 200 + 25))
+            self.window.blit(text1, textRect1)
+
+            text2 = self.font26.render('Restart', True, black, white)
+            textRect2 = text1.get_rect(center=(600 + 50, 400 + 25))
+            self.window.blit(text2, textRect2)
+
+            # click = False
+
+
             for event in events:
+                if event.type == pygame.QUIT:
+                    run = False
+
                 if event.type == pygame.MOUSEBUTTONUP:
 
                     # remove previous selection
@@ -74,9 +105,9 @@ class Game:
 
                     # get new selection
                     y, x = pygame.mouse.get_pos()
-                    x, y = x // 50 - 1, y // 50 - 1
 
                     # display selection
+                    x, y = x // 50 - 1, y // 50 - 1
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
                         self.select(x, y)
                         selected = True
@@ -149,8 +180,16 @@ class Game:
             pygame.display.update()
             if keys[pygame.K_ESCAPE]:
                 run = False
+        # pygame.time.wait(5)
+        # Render the current text.
+        # pygame.display.flip()
+        # txt_surface = self.font26.render('closing the game', True, (200, 0, 0), white)
+        # self.window.blit(txt_surface, (100, 100))
+        # clock.tick(3000)
 
+        pygame.display.quit()
         pygame.quit()
+
 
     def drawGrid(self):
         for i, offset in enumerate(range(0, 500, 50)):
