@@ -10,11 +10,11 @@ red = (255, 0, 0)
 green = (21, 119, 40)
 
 
-class Board:
+class Game:
 
-    def __init__(self, board=None):
+    def __init__(self, diff='medium'):
 
-        self.board, self.solution = self.GeneratedBoard('easy')
+        self.board, self.solution = self.GeneratedBoard(diff)
         self.temp = deepcopy(self.board)
 
         # Start the game
@@ -272,3 +272,10 @@ class Board:
                 c = int(c)
                 board[r][c] = '.'
         return board, solution
+
+
+if __name__ == '__main__':
+    game = Game()
+
+
+
