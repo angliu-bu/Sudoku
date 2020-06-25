@@ -14,7 +14,9 @@ class Game:
 
     def __init__(self, diff='medium'):
 
-        self.board, self.solution = self.GeneratedBoard(diff)
+        self.board = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
+        self.solution = [["5","1","9","7","4","8","6","3","2"],["7","8","3","6","5","2","4","1","9"],["4","2","6","1","3","9","8","7","5"],["3","5","7","9","8","6","2","4","1"],["2","6","4","3","1","7","5","9","8"],["1","9","8","5","2","4","3","6","7"],["9","7","5","8","6","3","1","2","4"],["8","3","2","4","9","1","7","5","6"],["6","4","1","2","7","5","9","8","3"]]
+        # self.solution = self.GeneratedBoard(diff)
         self.temp = deepcopy(self.board)
 
         # Start the game
@@ -94,6 +96,50 @@ class Game:
                 if keys[pygame.K_RETURN] and self.temp[x][y] == self.solution[x][y]:
                     self.write(self.temp[x][y], x, y)
                     selected = False
+
+                if keys[pygame.K_LEFT] and y > 0:
+                    i = y - 1
+                    while i > 0 and self.board[x][i] != '.':
+                        i -= 1
+
+                    if self.board[x][i] == '.':
+                        self.deselect(x, y)
+                        self.select(x, i)
+                        y = i
+                    pygame.time.wait(150)
+
+                if keys[pygame.K_RIGHT] and y < 8:
+                    i = y + 1
+                    while i < 8 and self.board[x][i] != '.':
+                        i += 1
+
+                    if self.board[x][i] == '.':
+                        self.deselect(x, y)
+                        self.select(x, i)
+                        y = i
+                    pygame.time.wait(150)
+
+                if keys[pygame.K_DOWN] and x < 8:
+                    i = x + 1
+                    while i < 8 and self.board[i][y] != '.':
+                        i += 1
+
+                    if self.board[i][y] == '.':
+                        self.deselect(x, y)
+                        self.select(i, y)
+                        x = i
+                    pygame.time.wait(150)
+
+                if keys[pygame.K_UP] and x > 0:
+                    i = x - 1
+                    while i > 0 and self.board[i][y] != '.':
+                        i -= 1
+
+                    if self.board[i][y] == '.':
+                        self.deselect(x, y)
+                        self.select(i, y)
+                        x = i
+                    pygame.time.wait(150)
 
             if keys[pygame.K_SPACE]:
                 if selected:
@@ -274,7 +320,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    game = Game()
+    game = Game('hard')
 
 
 
