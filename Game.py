@@ -267,9 +267,8 @@ class Game:
         solution = deepcopy(board)
 
         for r in range(9):
-            columns = random.sample('012345678', difficulty[d])
+            columns = random.sample(list(range(9)), difficulty[d])
             for c in columns:
-                c = int(c)
                 board[r][c] = '.'
         return board, solution
 
