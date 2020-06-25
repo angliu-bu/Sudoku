@@ -86,6 +86,30 @@ import random
 
 
 
+def GeneratedBoard(k):
+    board = [['.'for _ in range(9)] for _ in range(9)]
+    rows = defaultdict(set)
+    cols = defaultdict(set)
+    blocks = defaultdict(set)
+    numList = list('123456789')
+    indexList = list('02345678')
+
+    def fill(c, r, v):
+        board[r][c] = v
+        rows[r].add(v)
+        cols[c].add(v)
+        blocks[(r // 3, c // 3)].add(v)
+
+
+    while k >0:
+        num = random.choice(numList)
+        r = int(random.choice(indexList))
+        c = int(random.choice(indexList))
+        if board[r][c] == '.':
+            if num not in rows[r] and num not in cols[c] and num not in blocks[(r // 3, c // 3)] and len(blocks[(r // 3, c // 3)]) <= 5:
+                fill(c, r, num)
+                k -= 1
+    return board
 
 
 

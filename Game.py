@@ -6,24 +6,21 @@ import pygame
 class Board:
 
     def __init__(self, board=None):
-        if board:
-            self.board = board
-        else:
-            self.board = GeneratedBoard(40)
 
-        for row in self.board:
-            print(row)
+        self.solution = self.GeneratedBoard(81)
 
-        self.temp = deepcopy(self.board)
-        self.solution = deepcopy(self.board)
-
-        self.solve(self.solution)
-
-        print('\n')
-        for row in self.solution:
-            print(row)
-
-        self.launchGUI()
+        print(self.solution)
+        # if board:
+        #     self.board = board
+        # else:
+        #     self.board = GeneratedBoard(40)
+        #
+        # self.temp = deepcopy(self.board)
+        # self.solution = deepcopy(self.board)
+        #
+        # self.solve(self.solution)
+        #
+        # self.launchGame()
 
     def __str__(self):
 
@@ -39,7 +36,7 @@ class Board:
             res += '\n'
         return res
 
-    def launchGUI(self):
+    def launchGame(self):
 
         # Start the game
         pygame.init()
@@ -60,6 +57,7 @@ class Board:
         window.fill(white)
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
+
         # Place numbers
         for x, row in enumerate(self.board):
             for y, value in enumerate(row):
@@ -106,7 +104,7 @@ class Board:
             textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
             window.blit(text, textRect)
 
-        def showSolution():
+        def showSolution(show=False):
             rows = defaultdict(set)
             cols = defaultdict(set)
             blocks = defaultdict(set)
@@ -129,8 +127,6 @@ class Board:
 
             def get_empty_cell():
                 empty = []
-
-
                 for r in range(9):
                     for c in range(9):
                         if self.board[r][c] == '.':
@@ -145,9 +141,10 @@ class Board:
                 cols[c].add(v)
                 blocks[(r // 3, c // 3)].add(v)
 
-                write(v, r, c, green)
-                pygame.display.update()
-                pygame.time.wait(50)
+                if show:
+                    write(v, r, c, green)
+                    pygame.display.update()
+                    pygame.time.wait(50)
 
             def unfill(r, c, v):
                 self.board[r][c] = '.'
@@ -233,19 +230,19 @@ class Board:
 
         pygame.quit()
 
-
-    def solve(self, board):
+    def GeneratedBoard(self, k):
+        board = [['.'for _ in range(9)] for _ in range(9)]
         rows = defaultdict(set)
         cols = defaultdict(set)
         blocks = defaultdict(set)
+        numList = list('123456789')
+        indexList = list('02345678')
 
-        for r in range(9):
-            for c in range(9):
-                val = board[r][c]
-                if val != '.':
-                    rows[r].add(val)
-                    cols[c].add(val)
-                    blocks[(r // 3, c // 3)].add(val)
+        def fill(c, r, v):
+            board[r][c] = v
+            rows[r].add(v)
+            cols[c].add(v)
+            blocks[(r // 3, c // 3)].add(v)
 
         def get_choices(r, c):
             choices = []
@@ -257,7 +254,6 @@ class Board:
 
         def get_empty_cell():
             empty = []
-
             for r in range(9):
                 for c in range(9):
                     if board[r][c] == '.':
@@ -266,73 +262,22 @@ class Board:
 
             return min(empty, key=lambda x: len(x[2])) if empty else None
 
-        def fill(r, c, v):
-            board[r][c] = v
-            rows[r].add(v)
-            cols[c].add(v)
-            blocks[(r // 3, c // 3)].add(v)
-
-
-
-        def unfill(r, c, v):
-            board[r][c] = '.'
-            rows[r].remove(v)
-            cols[c].remove(v)
-            blocks[(r // 3, c // 3)].remove(v)
-
-        def solve_board():
+        while k > 0:
             empty = get_empty_cell()
-            if not empty:
-                return True
-            else:
+
+            if empty:
+
                 r, c, choices = empty
-                if not choices:
-                    return False
+                if choices:
+                    num = random.choice(choices)
+                    fill(c, r, num)
+                    k -= 1
 
-                for choice in choices:
-                    fill(r, c, choice)
-                    if solve_board():
-                        return True
-                    else:
-                        unfill(r, c, choice)
-                return False
+                else:
+                    k = 81
+                    board = [['.' for _ in range(9)] for _ in range(9)]
+                    rows = defaultdict(set)
+                    cols = defaultdict(set)
+                    blocks = defaultdict(set)
 
-        solve_board()
-
-def generateBoard(ratio):
-    board = [['.' for _ in range(9)] for _ in range(9)]
-
-    count = (81 * ratio) // 100
-    numList = '123456789'
-    indexList = '012345678'
-
-    rows = defaultdict(set)
-    cols = defaultdict(set)
-    blocks = defaultdict(set)
-
-    def fill(r, c, v):
-        board[r][c] = v
-        rows[r].add(v)
-        cols[c].add(v)
-        blocks[(r // 3, c // 3)].add(v)
-
-    for r in range(9):
-        for c in range(9):
-            val = board[r][c]
-            if val != '.':
-                rows[r].add(val)
-                cols[c].add(val)
-                blocks[(r // 3, c // 3)].add(val)
-
-    while count > 0:
-        num = random.choice(numList)
-        r = int(random.choice(indexList))
-        c = int(random.choice(indexList))
-
-        if board[r][c] == '.':
-            if num not in rows[r] and num not in cols[c] and num not in blocks[(r // 3, c // 3)] and len(blocks[(r // 3, c // 3)]) <= 5:
-                fill(c, r, num)
-                count -= 1
-
-    return board
-
+        return board
