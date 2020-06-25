@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from copy import deepcopy
-
+import pygame, sys
 import pygame
 
 black = (0, 0, 0)
@@ -64,8 +64,12 @@ class Game:
             keys = pygame.key.get_pressed()
 
             for event in events:
-                if event.type == pygame.MOUSEBUTTONUP:
+                if event.type == pygame.QUIT:
+                    pygame.display.quit()
+                    pygame.quit()
+                    sys.exit()
 
+                if event.type == pygame.MOUSEBUTTONUP:
                     # remove previous selection
                     if selected:
                         self.deselect(x, y)
