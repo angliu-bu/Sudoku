@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 from copy import deepcopy
-import pygame, sys
+import time
 import pygame
 
 black = (0, 0, 0)
@@ -25,7 +25,7 @@ class Game:
         self.font20 = pygame.font.Font(None, 20)
 
         # Create window
-        self.window = pygame.display.set_mode(size=(550, 550))
+        self.window = pygame.display.set_mode(size=(750, 550))
         self.window.fill(white)
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
@@ -55,7 +55,9 @@ class Game:
             res += '\n'
         return res
 
+
     def run(self):
+        clock = pygame.time.Clock()
 
         selected = False
         run = True
@@ -65,9 +67,7 @@ class Game:
 
             for event in events:
                 if event.type == pygame.QUIT:
-                    pygame.display.quit()
-                    pygame.quit()
-                    sys.exit()
+                    run = False
 
                 if event.type == pygame.MOUSEBUTTONUP:
                     # remove previous selection
@@ -107,8 +107,15 @@ class Game:
             pygame.display.update()
             if keys[pygame.K_ESCAPE]:
                 run = False
-
+        # pygame.time.wait(5)
+        # Render the current text.
+        # pygame.display.flip()
+        # txt_surface = self.font26.render('closing the game', True, (200, 0, 0), white)
+        # self.window.blit(txt_surface, (100, 100))
+        # clock.tick(3000)
+        pygame.display.quit()
         pygame.quit()
+
 
     def drawGrid(self):
         for i, offset in enumerate(range(0, 500, 50)):
