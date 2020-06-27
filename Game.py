@@ -1,7 +1,6 @@
 import random
 from collections import defaultdict
 from copy import deepcopy
-import time
 import pygame
 
 black = (0, 0, 0)
@@ -10,18 +9,26 @@ red = (255, 0, 0)
 green = (21, 119, 40)
 
 
-
 class Game:
 
     def __init__(self, diff='medium'):
 
-        # self.board = [[".",".","9","7","4","8",".",".","."],["7",".",".",".",".",".",".",".","."],[".","2",".","1",".","9",".",".","."],[".",".","7",".",".",".","2","4","."],[".","6","4",".","1",".","5","9","."],[".","9","8",".",".",".","3",".","."],[".",".",".","8",".","3",".","2","."],[".",".",".",".",".",".",".",".","6"],[".",".",".","2","7","5","9",".","."]]
-        # self.solution = [["5","1","9","7","4","8","6","3","2"],["7","8","3","6","5","2","4","1","9"],["4","2","6","1","3","9","8","7","5"],["3","5","7","9","8","6","2","4","1"],["2","6","4","3","1","7","5","9","8"],["1","9","8","5","2","4","3","6","7"],["9","7","5","8","6","3","1","2","4"],["8","3","2","4","9","1","7","5","6"],["6","4","1","2","7","5","9","8","3"]]
+        # self.board = [[".", ".", "9", "7", "4", "8", ".", ".", "."], ["7", ".", ".", ".", ".", ".", ".", ".", "."],
+        #               [".", "2", ".", "1", ".", "9", ".", ".", "."], [".", ".", "7", ".", ".", ".", "2", "4", "."],
+        #               [".", "6", "4", ".", "1", ".", "5", "9", "."], [".", "9", "8", ".", ".", ".", "3", ".", "."],
+        #               [".", ".", ".", "8", ".", "3", ".", "2", "."], [".", ".", ".", ".", ".", ".", ".", ".", "6"],
+        #               [".", ".", ".", "2", "7", "5", "9", ".", "."]]
+        # self.solution = [["5", "1", "9", "7", "4", "8", "6", "3", "2"], ["7", "8", "3", "6", "5", "2", "4", "1", "9"],
+        #                  ["4", "2", "6", "1", "3", "9", "8", "7", "5"], ["3", "5", "7", "9", "8", "6", "2", "4", "1"],
+        #                  ["2", "6", "4", "3", "1", "7", "5", "9", "8"], ["1", "9", "8", "5", "2", "4", "3", "6", "7"],
+        #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
+        #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
         self.board, self.solution = self.GeneratedBoard(diff)
         self.temp = deepcopy(self.board)
 
         # Start the game
         pygame.init()
+        clock = pygame.time.Clock()
 
         # Fonts
         self.font26 = pygame.font.Font(None, 26)
@@ -58,7 +65,6 @@ class Game:
             res += '\n'
         return res
 
-
     def run(self):
         clock = pygame.time.Clock()
         button1 = pygame.Rect(600, 200, 100, 50)
@@ -66,6 +72,7 @@ class Game:
         selected = False
         run = True
         click = False
+        time = 0
         while run:
             events = pygame.event.get()
             keys = pygame.key.get_pressed()
@@ -91,7 +98,6 @@ class Game:
             self.window.blit(text2, textRect2)
 
             # click = False
-
 
             for event in events:
                 if event.type == pygame.QUIT:
@@ -177,9 +183,26 @@ class Game:
                     self.clearCell(x, y)
                 self.solve()
 
+            clock.tick()
+            time += clock.get_rawtime()
+
+            mins = str((time // 1000) // 60)
+            secs = str((time // 1000) % 60)
+            if len(secs) == 1:
+                secs = '0' + secs
+
+            pygame.draw.rect(self.window, white, (430, 505, 20, 20))
+
+            text = self.font26.render(mins + ':' + secs, True, black, white)
+            textRect = text.get_rect(center=(480, 520))
+            self.window.blit(text, textRect)
+
             pygame.display.update()
             if keys[pygame.K_ESCAPE]:
                 run = False
+
+
+
         # pygame.time.wait(5)
         # Render the current text.
         # pygame.display.flip()
@@ -189,7 +212,6 @@ class Game:
 
         pygame.display.quit()
         pygame.quit()
-
 
     def drawGrid(self):
         for i, offset in enumerate(range(0, 500, 50)):
@@ -360,6 +382,3 @@ class Game:
 
 if __name__ == '__main__':
     game = Game('hard')
-
-
-
