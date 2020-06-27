@@ -191,7 +191,7 @@ class Game:
             if len(secs) == 1:
                 secs = '0' + secs
 
-            pygame.draw.rect(self.window, white, (430, 505, 20, 20))
+            pygame.draw.rect(self.window, white, (430, 505, 100, 50))
 
             text = self.font26.render(mins + ':' + secs, True, black, white)
             textRect = text.get_rect(center=(480, 520))
