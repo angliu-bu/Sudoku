@@ -101,14 +101,24 @@ class Game:
 
                     # get new selection
                     y, x = pygame.mouse.get_pos()
+                    if 190 <= y <= 230 and 510 <= x <= 530:
+                        self.diff = 'easy'
+                        c = 0
+                    if 240 <= y <= 310 and 510 <= x <= 530:
+                        self.diff = 'medium'
+                        c = 1
+                    if 320 <= y <= 360 and 510 <= x <= 530:
+                        self.diff = 'hard'
+                        c = 2
+                    self.colorButtons(c)
 
-                    if 0 <= y <= 100 and 450 <= x <= 550:
+                    if 50 <= y <= 110 and 510 <= x <= 530:
                         self.board, self.solution = self.GeneratedBoard(self.diff)
                         self.temp = deepcopy(self.board)
                         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
-
                         self.drawGrid()
                         time = 0
+
 
                     # display selection
                     x, y = x // 50 - 1, y // 50 - 1
