@@ -7,7 +7,7 @@ black = (0, 0, 0)
 white = (211, 211, 211)
 red = (255, 0, 0)
 green = (21, 119, 40)
-
+orange = (200, 100, 0)
 
 class Game:
 
@@ -35,7 +35,7 @@ class Game:
         self.font20 = pygame.font.Font(None, 20)
 
         # Create window
-        self.window = pygame.display.set_mode(size=(750, 550))
+        self.window = pygame.display.set_mode(size=(550, 550))
         self.window.fill(white)
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
@@ -67,37 +67,30 @@ class Game:
 
     def run(self):
         clock = pygame.time.Clock()
-        button1 = pygame.Rect(600, 200, 100, 50)
-        button2 = pygame.Rect(600, 400, 100, 50)
+
+
+        restartText = self.font26.render("Restart", True, black, orange)
+        restartRect = restartText.get_rect(center=(80, 520))
+        self.window.blit(restartText, restartRect)
+
+        easyText = self.font26.render("Easy", True, black, white)
+        easyRect = restartText.get_rect(center=(225, 520))
+        self.window.blit(easyText, easyRect)
+
+        medText = self.font26.render("Medium", True, black, green)
+        medRect = restartText.get_rect(center=(275, 520))
+        self.window.blit(medText, medRect)
+
+        hardText = self.font26.render("Hard", True, black, white)
+        hardRect = restartText.get_rect(center=(350, 520))  #(350, 520)
+        self.window.blit(hardText, hardRect)
+
         selected = False
         run = True
-        click = False
         time = 0
         while run:
             events = pygame.event.get()
             keys = pygame.key.get_pressed()
-
-            # x, y = pygame.mouse.get_pos()
-            #
-            # # check for clinking bottoms
-            # if button1.collidepoint((x, y)):
-            #     if click:
-            #         pass
-            # if button2.collidepoint((x, y)):
-            #     if click:
-            #         pass
-            pygame.draw.rect(self.window, (200, 0, 0), button1)
-            pygame.draw.rect(self.window, (200, 100, 0), button2)
-
-            text1 = self.font26.render('Level', True, black, white)
-            textRect1 = text1.get_rect(center=(600 + 50, 200 + 25))
-            self.window.blit(text1, textRect1)
-
-            text2 = self.font26.render('Restart', True, black, white)
-            textRect2 = text1.get_rect(center=(600 + 50, 400 + 25))
-            self.window.blit(text2, textRect2)
-
-            # click = False
 
             for event in events:
                 if event.type == pygame.QUIT:
@@ -117,6 +110,11 @@ class Game:
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
                         self.select(x, y)
                         selected = True
+
+
+
+
+
 
             if selected:
                 # Check for user input
