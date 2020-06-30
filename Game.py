@@ -9,6 +9,7 @@ red = (255, 0, 0)
 green = (21, 119, 40)
 orange = (200, 100, 0)
 
+
 class Game:
 
     def __init__(self, diff='medium'):
@@ -25,7 +26,7 @@ class Game:
         #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
         self.diff = diff
         self.board, self.solution = self.GeneratedBoard(self.diff)
-        self.temp = deepcopy(self.board)
+        self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
 
         # Start the game
         pygame.init()
@@ -103,28 +104,30 @@ class Game:
 
                     # get new selection
                     y, x = pygame.mouse.get_pos()
-                    if 190 <= y <= 230 and 510 <= x <= 530:
+
+                    easy = 190 <= y <= 230 and 510 <= x <= 530
+                    medium = 240 <= y <= 310 and 510 <= x <= 530
+                    hard = 320 <= y <= 360 and 510 <= x <= 530
+                    restart = 50 <= y <= 110 and 510 <= x <= 530
+
+                    if easy:
                         self.diff = 'easy'
-                        self.restart()
-
-                    elif 240 <= y <= 310 and 510 <= x <= 530:
+                        self.newGame()
+                    elif medium:
                         self.diff = 'medium'
-                        self.restart()
-
-                    elif 320 <= y <= 360 and 510 <= x <= 530:
+                        self.newGame()
+                    elif hard:
                         self.diff = 'hard'
-                        self.restart()
+                        self.newGame()
 
-                    self.colorButtons(self.diff)
-                    if 50 <= y <= 110 and 510 <= x <= 530:
-                        self.restart()
+                    elif restart:
+                        self.newGame(sameBoard=True)
 
-
-                    x, y = x // 50 - 1, y // 50 - 1
-                    if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
-                        self.select(x, y)
-                        selected = True
-
+                    else:
+                        x, y = x // 50 - 1, y // 50 - 1
+                        if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
+                            self.select(x, y)
+                            selected = True
 
             if selected:
                 # Check for user input
@@ -212,7 +215,7 @@ class Game:
         pygame.display.quit()
         pygame.quit()
 
-    def drawGrid(self, placeNums = False):
+    def drawGrid(self, placeNums=False):
         # Draw lines
         for i, offset in enumerate(range(0, 500, 50)):
             if i == 3 or i == 6:
@@ -260,12 +263,20 @@ class Game:
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
         self.window.blit(text, textRect)
 
-    def restart(self):
-        self.board, self.solution = self.GeneratedBoard(self.diff)
-        self.temp = deepcopy(self.board)
+    def newGame(self, sameBoard=False):
+
+        if sameBoard:
+            self.board = deepcopy(self.originalBoard)
+        else:
+            self.board, self.solution = self.GeneratedBoard(self.diff)
+
+        self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
+
         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
         self.drawGrid(placeNums=True)
         self.time = 0
+
+        self.colorButtons(self.diff)
 
     def solve(self):
         rows = defaultdict(set)
@@ -397,4 +408,4 @@ class Game:
 
 
 if __name__ == '__main__':
-    game = Game('hard')
+    game = Game()
