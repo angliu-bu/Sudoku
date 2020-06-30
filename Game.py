@@ -40,7 +40,7 @@ class Game:
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
 
-        self.drawGrid()
+        self.drawGrid(placeNums=True)
         self.run()
 
     def __str__(self):
@@ -59,7 +59,10 @@ class Game:
 
     def colorButtons(self, choice):
         colors = [white, white, white]
-        colors[choice] = green
+
+        diffToIndex = {'easy': 0, 'medium': 1, 'hard': 2}
+
+        colors[diffToIndex[choice]] = green
 
         easyText = self.font26.render("Easy", True, black, colors[0])
         easyRect = easyText.get_rect(center=(215, 520))
@@ -79,11 +82,11 @@ class Game:
         restartText = self.font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
-        self.colorButtons(1)
+        self.colorButtons(self.diff)
 
         selected = False
         run = True
-        time = 0
+        self.time = 0
         while run:
             events = pygame.event.get()
             keys = pygame.key.get_pressed()
@@ -100,25 +103,23 @@ class Game:
 
                     # get new selection
                     y, x = pygame.mouse.get_pos()
-                    c = 1
                     if 190 <= y <= 230 and 510 <= x <= 530:
                         self.diff = 'easy'
-                        c = 0
-                    if 240 <= y <= 310 and 510 <= x <= 530:
-                        self.diff = 'medium'
-                        c = 1
-                    if 320 <= y <= 360 and 510 <= x <= 530:
-                        self.diff = 'hard'
-                        c = 2
-                    self.colorButtons(c)
+                        self.restart()
 
+                    elif 240 <= y <= 310 and 510 <= x <= 530:
+                        self.diff = 'medium'
+                        self.restart()
+
+                    elif 320 <= y <= 360 and 510 <= x <= 530:
+                        self.diff = 'hard'
+                        self.restart()
+
+                    self.colorButtons(self.diff)
                     if 50 <= y <= 110 and 510 <= x <= 530:
-                        self.board, self.solution = self.GeneratedBoard(self.diff)
-                        self.temp = deepcopy(self.board)
-                        pygame.draw.rect(self.window, white, (50, 50, 450, 450))
-                        self.drawGrid()
-                        time = 0
-                    # display selection
+                        self.restart()
+
+
                     x, y = x // 50 - 1, y // 50 - 1
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
                         self.select(x, y)
@@ -191,10 +192,10 @@ class Game:
                 self.solve()
 
             clock.tick()
-            time += clock.get_rawtime()
+            self.time += clock.get_rawtime()
 
-            mins = str((time // 1000) // 60)
-            secs = str((time // 1000) % 60)
+            mins = str((self.time // 1000) // 60)
+            secs = str((self.time // 1000) % 60)
             if len(secs) == 1:
                 secs = '0' + secs
 
@@ -208,19 +209,10 @@ class Game:
             if keys[pygame.K_ESCAPE]:
                 run = False
 
-
-
-        # pygame.time.wait(5)
-        # Render the current text.
-        # pygame.display.flip()
-        # txt_surface = self.font26.render('closing the game', True, (200, 0, 0), white)
-        # self.window.blit(txt_surface, (100, 100))
-        # clock.tick(3000)
-
         pygame.display.quit()
         pygame.quit()
 
-    def drawGrid(self):
+    def drawGrid(self, placeNums = False):
         # Draw lines
         for i, offset in enumerate(range(0, 500, 50)):
             if i == 3 or i == 6:
@@ -230,13 +222,14 @@ class Game:
             pygame.draw.line(self.window, black, (50 + offset, 50), (50 + offset, 500), thickness)
             pygame.draw.line(self.window, black, (50, 50 + offset), (500, 50 + offset), thickness)
 
-        # Place numbers
-        for x, row in enumerate(self.board):
-            for y, value in enumerate(row):
-                if value != '.':
-                    text = self.font26.render(self.board[x][y], True, black, white)
-                    textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
-                    self.window.blit(text, textRect)
+        if placeNums:
+            # Place numbers
+            for x, row in enumerate(self.board):
+                for y, value in enumerate(row):
+                    if value != '.':
+                        text = self.font26.render(self.board[x][y], True, black, white)
+                        textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
+                        self.window.blit(text, textRect)
 
     def select(self, x, y):
         pygame.draw.rect(self.window, red, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
@@ -266,6 +259,13 @@ class Game:
         text = self.font26.render(val, True, color, white)
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
         self.window.blit(text, textRect)
+
+    def restart(self):
+        self.board, self.solution = self.GeneratedBoard(self.diff)
+        self.temp = deepcopy(self.board)
+        pygame.draw.rect(self.window, white, (50, 50, 450, 450))
+        self.drawGrid(placeNums=True)
+        self.time = 0
 
     def solve(self):
         rows = defaultdict(set)
