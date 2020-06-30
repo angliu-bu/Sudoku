@@ -24,6 +24,7 @@ class Game:
         #                  ["2", "6", "4", "3", "1", "7", "5", "9", "8"], ["1", "9", "8", "5", "2", "4", "3", "6", "7"],
         #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
         #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
+        self.time = 0
         self.diff = diff
         self.board, self.solution = self.GeneratedBoard(self.diff)
         self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
@@ -87,7 +88,6 @@ class Game:
 
         selected = False
         run = True
-        self.time = 0
         while run:
             events = pygame.event.get()
             keys = pygame.key.get_pressed()
