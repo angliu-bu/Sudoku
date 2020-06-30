@@ -79,7 +79,6 @@ class Game:
         restartText = self.font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
-
         self.colorButtons(1)
 
         selected = False
@@ -101,6 +100,7 @@ class Game:
 
                     # get new selection
                     y, x = pygame.mouse.get_pos()
+                    c = 1
                     if 190 <= y <= 230 and 510 <= x <= 530:
                         self.diff = 'easy'
                         c = 0
@@ -118,8 +118,6 @@ class Game:
                         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
                         self.drawGrid()
                         time = 0
-
-
                     # display selection
                     x, y = x // 50 - 1, y // 50 - 1
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
