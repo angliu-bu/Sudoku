@@ -23,12 +23,12 @@ class Game:
         #                  ["2", "6", "4", "3", "1", "7", "5", "9", "8"], ["1", "9", "8", "5", "2", "4", "3", "6", "7"],
         #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
         #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
-        self.board, self.solution = self.GeneratedBoard(diff)
+        self.diff = diff
+        self.board, self.solution = self.GeneratedBoard(self.diff)
         self.temp = deepcopy(self.board)
 
         # Start the game
         pygame.init()
-        clock = pygame.time.Clock()
 
         # Fonts
         self.font26 = pygame.font.Font(None, 26)
@@ -39,14 +39,6 @@ class Game:
         self.window.fill(white)
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
-
-        # Place numbers
-        for x, row in enumerate(self.board):
-            for y, value in enumerate(row):
-                if value != '.':
-                    text = self.font26.render(self.board[x][y], True, black, white)
-                    textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
-                    self.window.blit(text, textRect)
 
         self.drawGrid()
         self.run()
@@ -110,11 +102,20 @@ class Game:
                     # get new selection
                     y, x = pygame.mouse.get_pos()
 
+                    if 0 <= y <= 100 and 450 <= x <= 550:
+                        self.board, self.solution = self.GeneratedBoard(self.diff)
+                        self.temp = deepcopy(self.board)
+                        pygame.draw.rect(self.window, white, (50, 50, 450, 450))
+
+                        self.drawGrid()
+                        time = 0
+
                     # display selection
                     x, y = x // 50 - 1, y // 50 - 1
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
                         self.select(x, y)
                         selected = True
+
 
             if selected:
                 # Check for user input
@@ -212,6 +213,7 @@ class Game:
         pygame.quit()
 
     def drawGrid(self):
+        # Draw lines
         for i, offset in enumerate(range(0, 500, 50)):
             if i == 3 or i == 6:
                 thickness = 4
@@ -219,6 +221,14 @@ class Game:
                 thickness = 2
             pygame.draw.line(self.window, black, (50 + offset, 50), (50 + offset, 500), thickness)
             pygame.draw.line(self.window, black, (50, 50 + offset), (500, 50 + offset), thickness)
+
+        # Place numbers
+        for x, row in enumerate(self.board):
+            for y, value in enumerate(row):
+                if value != '.':
+                    text = self.font26.render(self.board[x][y], True, black, white)
+                    textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
+                    self.window.blit(text, textRect)
 
     def select(self, x, y):
         pygame.draw.rect(self.window, red, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 47, 47), 2)
