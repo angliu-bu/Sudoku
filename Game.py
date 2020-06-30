@@ -113,9 +113,11 @@ class Game:
                     if easy:
                         self.diff = 'easy'
                         self.newGame()
+
                     elif medium:
                         self.diff = 'medium'
                         self.newGame()
+
                     elif hard:
                         self.diff = 'hard'
                         self.newGame()
