@@ -105,9 +105,9 @@ class Game:
                     # get new selection
                     y, x = pygame.mouse.get_pos()
 
-                    easy = 190 <= y <= 230 and 510 <= x <= 530
-                    medium = 240 <= y <= 310 and 510 <= x <= 530
-                    hard = 320 <= y <= 360 and 510 <= x <= 530
+                    easy = 190 <= y <= 232 and 510 <= x <= 530
+                    medium = 240 <= y <= 308 and 510 <= x <= 530
+                    hard = 316 <= y <= 360 and 510 <= x <= 530
                     restart = 50 <= y <= 110 and 510 <= x <= 530
 
                     if easy:
