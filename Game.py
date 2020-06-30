@@ -1,3 +1,5 @@
+# this is a game for sovling sodoku.
+
 import random
 from collections import defaultdict
 from copy import deepcopy
@@ -13,7 +15,7 @@ orange = (200, 100, 0)
 class Game:
 
     def __init__(self, diff='medium'):
-
+        # example of a board
         # self.board = [[".", ".", "9", "7", "4", "8", ".", ".", "."], ["7", ".", ".", ".", ".", ".", ".", ".", "."],
         #               [".", "2", ".", "1", ".", "9", ".", ".", "."], [".", ".", "7", ".", ".", ".", "2", "4", "."],
         #               [".", "6", "4", ".", "1", ".", "5", "9", "."], [".", "9", "8", ".", ".", ".", "3", ".", "."],
@@ -25,7 +27,7 @@ class Game:
         #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
         #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
         self.time = 0
-        self.diff = diff
+        self.diff = diff    # set the difficulty of the game
         self.board, self.solution = self.GeneratedBoard(self.diff)
         self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
 
@@ -45,47 +47,28 @@ class Game:
         self.drawGrid(placeNums=True)
         self.run()
 
-    def __str__(self):
 
-        res = ''
-        for i, row in enumerate(self.board):
-            for j, value in enumerate(row):
-                res += value + "  "
-                if j == 2 or j == 5:
-                    res += "| "
-            if i == 2 or i == 5:
-                res += "\n- - - - - - - - - - - - - - - -"
-
-            res += '\n'
-        return res
-
+#        add the buttom and also set the color of each buttom
     def colorButtons(self, choice):
         colors = [white, white, white]
-
         diffToIndex = {'easy': 0, 'medium': 1, 'hard': 2}
-
         colors[diffToIndex[choice]] = green
-
         easyText = self.font26.render("Easy", True, black, colors[0])
         easyRect = easyText.get_rect(center=(215, 520))
         self.window.blit(easyText, easyRect)
-
         medText = self.font26.render("Medium", True, black, colors[1])
         medRect = medText.get_rect(center=(275, 520))
         self.window.blit(medText, medRect)
-
         hardText = self.font26.render("Hard", True, black, colors[2])
         hardRect = hardText.get_rect(center=(335, 520))  # (350, 520)
         self.window.blit(hardText, hardRect)
-
+    # running the game, keep updating the screen.
     def run(self):
         clock = pygame.time.Clock()
-
         restartText = self.font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
         self.colorButtons(self.diff)
-
         selected = False
         run = True
         while run:
@@ -97,11 +80,9 @@ class Game:
                     run = False
 
                 if event.type == pygame.MOUSEBUTTONUP:
-
                     # remove previous selection
                     if selected:
                         self.deselect(x, y)
-
                     # get new selection
                     y, x = pygame.mouse.get_pos()
 
@@ -198,14 +179,12 @@ class Game:
 
             clock.tick()
             self.time += clock.get_rawtime()
-
             mins = str((self.time // 1000) // 60)
             secs = str((self.time // 1000) % 60)
             if len(secs) == 1:
                 secs = '0' + secs
 
             pygame.draw.rect(self.window, white, (430, 505, 100, 50))
-
             text = self.font26.render(mins + ':' + secs, True, black, white)
             textRect = text.get_rect(center=(480, 520))
             self.window.blit(text, textRect)
@@ -220,10 +199,8 @@ class Game:
     def drawGrid(self, placeNums=False):
         # Draw lines
         for i, offset in enumerate(range(0, 500, 50)):
-            if i == 3 or i == 6:
-                thickness = 4
-            else:
-                thickness = 2
+            if i == 3 or i == 6: thickness = 4
+            else: thickness = 2
             pygame.draw.line(self.window, black, (50 + offset, 50), (50 + offset, 500), thickness)
             pygame.draw.line(self.window, black, (50, 50 + offset), (500, 50 + offset), thickness)
 
@@ -249,10 +226,8 @@ class Game:
 
     def pencil(self, val, x, y):
         self.temp[x][y] = str(val)
-
         self.clearCell(x, y)
         self.select(x, y)
-
         text = self.font20.render(self.temp[x][y], True, black, white)
         textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 64))
         self.window.blit(text, textRect)
@@ -260,7 +235,6 @@ class Game:
     def write(self, val, x, y, color=black):
         self.clearCell(x, y)
         self.board[x][y] = val
-
         text = self.font26.render(val, True, color, white)
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
         self.window.blit(text, textRect)
@@ -271,9 +245,7 @@ class Game:
             self.board = deepcopy(self.originalBoard)
         else:
             self.board, self.solution = self.GeneratedBoard(self.diff)
-
         self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
-
         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
         self.drawGrid(placeNums=True)
         self.time = 0
@@ -281,10 +253,7 @@ class Game:
         self.colorButtons(self.diff)
 
     def solve(self):
-        rows = defaultdict(set)
-        cols = defaultdict(set)
-        blocks = defaultdict(set)
-
+        rows, cols, blocks = defaultdict(set),  defaultdict(set),  defaultdict(set)
         for r in range(9):
             for c in range(9):
                 val = self.board[r][c]
@@ -298,7 +267,6 @@ class Game:
             for d in '123456789':
                 if d not in rows[r] and d not in cols[c] and d not in blocks[(r // 3, c // 3)]:
                     choices.append(d)
-
             return choices
 
         def get_empty_cell():
@@ -316,7 +284,6 @@ class Game:
             rows[r].add(v)
             cols[c].add(v)
             blocks[(r // 3, c // 3)].add(v)
-
             self.write(v, r, c, green)
             pygame.display.update()
             pygame.time.wait(50)
@@ -334,7 +301,6 @@ class Game:
         def solve_board():
             # if events are not read, pygame will crash
             events = pygame.event.get()
-
             empty = get_empty_cell()
             if not empty:
                 return True
@@ -357,13 +323,9 @@ class Game:
     def GeneratedBoard(self, d='medium'):
 
         difficulty = {'easy': 4, 'medium': 5, 'hard': 7}
-
         count = 81
         board = [['.' for _ in range(9)] for _ in range(9)]
-        rows = defaultdict(set)
-        cols = defaultdict(set)
-        blocks = defaultdict(set)
-
+        rows, cols, blocks = defaultdict(set), defaultdict(set), defaultdict(set)
         def get_choices(r, c):
             choices = []
             for d in '123456789':
@@ -378,7 +340,6 @@ class Game:
                     if board[r][c] == '.':
                         choices = get_choices(r, c)
                         empty.append((r, c, choices))
-
             return min(empty, key=lambda x: len(x[2])) if empty else None
 
         while count > 0:
@@ -399,7 +360,6 @@ class Game:
                     rows = defaultdict(set)
                     cols = defaultdict(set)
                     blocks = defaultdict(set)
-
         solution = deepcopy(board)
 
         for r in range(9):
@@ -407,7 +367,6 @@ class Game:
             for c in columns:
                 board[r][c] = '.'
         return board, solution
-
 
 if __name__ == '__main__':
     game = Game()
