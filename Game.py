@@ -65,25 +65,30 @@ class Game:
             res += '\n'
         return res
 
+    def colorButtons(self, choice):
+        colors = [white, white, white]
+        colors[choice] = green
+
+        easyText = self.font26.render("Easy", True, black, colors[0])
+        easyRect = easyText.get_rect(center=(215, 520))
+        self.window.blit(easyText, easyRect)
+
+        medText = self.font26.render("Medium", True, black, colors[1])
+        medRect = medText.get_rect(center=(275, 520))
+        self.window.blit(medText, medRect)
+
+        hardText = self.font26.render("Hard", True, black, colors[2])
+        hardRect = hardText.get_rect(center=(335, 520))  # (350, 520)
+        self.window.blit(hardText, hardRect)
+
     def run(self):
         clock = pygame.time.Clock()
-
 
         restartText = self.font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
 
-        easyText = self.font26.render("Easy", True, black, white)
-        easyRect = restartText.get_rect(center=(225, 520))
-        self.window.blit(easyText, easyRect)
-
-        medText = self.font26.render("Medium", True, black, green)
-        medRect = restartText.get_rect(center=(275, 520))
-        self.window.blit(medText, medRect)
-
-        hardText = self.font26.render("Hard", True, black, white)
-        hardRect = restartText.get_rect(center=(350, 520))  #(350, 520)
-        self.window.blit(hardText, hardRect)
+        self.colorButtons(1)
 
         selected = False
         run = True
@@ -110,11 +115,6 @@ class Game:
                     if 0 <= x < 9 and 0 <= y < 9 and self.board[x][y] == '.':
                         self.select(x, y)
                         selected = True
-
-
-
-
-
 
             if selected:
                 # Check for user input
