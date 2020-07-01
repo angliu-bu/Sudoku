@@ -27,7 +27,7 @@ class Game:
         #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
         #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
         self.time = 0
-        self.diff = diff    # set the difficulty of the game
+        self.diff = diff  # set the difficulty of the game
         self.board, self.solution = self.GeneratedBoard(self.diff)
         self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
 
@@ -47,28 +47,34 @@ class Game:
         self.drawGrid(placeNums=True)
         self.run()
 
-
-#        add the buttom and also set the color of each buttom
+    # Color buttons according to difficulty selection
     def colorButtons(self, choice):
         colors = [white, white, white]
         diffToIndex = {'easy': 0, 'medium': 1, 'hard': 2}
         colors[diffToIndex[choice]] = green
+
         easyText = self.font26.render("Easy", True, black, colors[0])
         easyRect = easyText.get_rect(center=(215, 520))
         self.window.blit(easyText, easyRect)
+
         medText = self.font26.render("Medium", True, black, colors[1])
         medRect = medText.get_rect(center=(275, 520))
         self.window.blit(medText, medRect)
+
         hardText = self.font26.render("Hard", True, black, colors[2])
         hardRect = hardText.get_rect(center=(335, 520))  # (350, 520)
         self.window.blit(hardText, hardRect)
-    # running the game, keep updating the screen.
+
+    # Run the game, and display game on the GUI
     def run(self):
-        clock = pygame.time.Clock()
+        # Set up buttons
         restartText = self.font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
         self.colorButtons(self.diff)
+
+        # Run
+        clock = pygame.time.Clock()
         selected = False
         run = True
         while run:
@@ -137,7 +143,8 @@ class Game:
                         self.deselect(x, y)
                         self.select(x, i)
                         y = i
-                    pygame.time.wait(150)
+
+                    pygame.time.wait(150)  # debounce
 
                 if keys[pygame.K_RIGHT] and y < 8:
                     i = y + 1
@@ -148,7 +155,8 @@ class Game:
                         self.deselect(x, y)
                         self.select(x, i)
                         y = i
-                    pygame.time.wait(150)
+
+                    pygame.time.wait(150)  # debounce
 
                 if keys[pygame.K_DOWN] and x < 8:
                     i = x + 1
@@ -159,7 +167,8 @@ class Game:
                         self.deselect(x, y)
                         self.select(i, y)
                         x = i
-                    pygame.time.wait(150)
+
+                    pygame.time.wait(150)  # debounce
 
                 if keys[pygame.K_UP] and x > 0:
                     i = x - 1
@@ -170,7 +179,8 @@ class Game:
                         self.deselect(x, y)
                         self.select(i, y)
                         x = i
-                    pygame.time.wait(150)
+
+                    pygame.time.wait(150)  # debounce
 
             if keys[pygame.K_SPACE]:
                 if selected:
@@ -199,8 +209,10 @@ class Game:
     def drawGrid(self, placeNums=False):
         # Draw lines
         for i, offset in enumerate(range(0, 500, 50)):
-            if i == 3 or i == 6: thickness = 4
-            else: thickness = 2
+            if i == 3 or i == 6:
+                thickness = 4
+            else:
+                thickness = 2
             pygame.draw.line(self.window, black, (50 + offset, 50), (50 + offset, 500), thickness)
             pygame.draw.line(self.window, black, (50, 50 + offset), (500, 50 + offset), thickness)
 
@@ -228,6 +240,7 @@ class Game:
         self.temp[x][y] = str(val)
         self.clearCell(x, y)
         self.select(x, y)
+
         text = self.font20.render(self.temp[x][y], True, black, white)
         textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 64))
         self.window.blit(text, textRect)
@@ -235,25 +248,26 @@ class Game:
     def write(self, val, x, y, color=black):
         self.clearCell(x, y)
         self.board[x][y] = val
+
         text = self.font26.render(val, True, color, white)
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
         self.window.blit(text, textRect)
 
     def newGame(self, sameBoard=False):
-
         if sameBoard:
             self.board = deepcopy(self.originalBoard)
         else:
             self.board, self.solution = self.GeneratedBoard(self.diff)
         self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
+
         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
         self.drawGrid(placeNums=True)
+        self.colorButtons(self.diff)
         self.time = 0
 
-        self.colorButtons(self.diff)
-
+    # uses backtracking to solve the board (always solves the cell with least choices first)
     def solve(self):
-        rows, cols, blocks = defaultdict(set),  defaultdict(set),  defaultdict(set)
+        rows, cols, blocks = defaultdict(set), defaultdict(set), defaultdict(set)
         for r in range(9):
             for c in range(9):
                 val = self.board[r][c]
@@ -284,6 +298,7 @@ class Game:
             rows[r].add(v)
             cols[c].add(v)
             blocks[(r // 3, c // 3)].add(v)
+
             self.write(v, r, c, green)
             pygame.display.update()
             pygame.time.wait(50)
@@ -299,8 +314,7 @@ class Game:
             pygame.time.wait(50)
 
         def solve_board():
-            # if events are not read, pygame will crash
-            events = pygame.event.get()
+            events = pygame.event.get()  # if events are not read, pygame will crash
             empty = get_empty_cell()
             if not empty:
                 return True
@@ -326,6 +340,7 @@ class Game:
         count = 81
         board = [['.' for _ in range(9)] for _ in range(9)]
         rows, cols, blocks = defaultdict(set), defaultdict(set), defaultdict(set)
+
         def get_choices(r, c):
             choices = []
             for d in '123456789':
@@ -360,6 +375,7 @@ class Game:
                     rows = defaultdict(set)
                     cols = defaultdict(set)
                     blocks = defaultdict(set)
+
         solution = deepcopy(board)
 
         for r in range(9):
@@ -367,6 +383,7 @@ class Game:
             for c in columns:
                 board[r][c] = '.'
         return board, solution
+
 
 if __name__ == '__main__':
     game = Game()
