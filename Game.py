@@ -9,6 +9,7 @@ red = (255, 0, 0)
 green = (21, 119, 40)
 orange = (200, 100, 0)
 
+
 class Game:
 
     def __init__(self, diff='medium'):
