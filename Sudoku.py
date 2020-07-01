@@ -27,7 +27,10 @@ class Game:
         self.time = 0
         self.diff = diff  # set the difficulty of the game
         self.board, self.solution = self.GeneratedBoard(self.diff)
-        self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
+        self.temp = deepcopy(self.board)
+        self.solved = []
+
+
 
         # Start the game
         pygame.init()
@@ -230,9 +233,10 @@ class Game:
         pygame.draw.rect(self.window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48), 4)
         self.drawGrid()  # CleanUp any problems with the border
 
-    def clearCell(self, x, y):
+    def clearCell(self, x, y, fixGrid=True):
         pygame.draw.rect(self.window, white, ((y + 1) * 50 + 2, (x + 1) * 50 + 2, 48, 48))
-        self.drawGrid()  # CleanUp any problems with the border
+        if fixGrid:
+            self.drawGrid()  # CleanUp any problems with the border
 
     def pencil(self, val, x, y):
         self.temp[x][y] = str(val)
@@ -246,6 +250,7 @@ class Game:
     def write(self, val, x, y, color=black):
         self.clearCell(x, y)
         self.board[x][y] = val
+        self.solved.append((x, y))
 
         text = self.font26.render(val, True, color, white)
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
@@ -253,10 +258,18 @@ class Game:
 
     def newGame(self, sameBoard=False):
         if sameBoard:
-            self.board = deepcopy(self.originalBoard)
+
+            for x, y in self.solved:
+                self.board[x][y] = '.'
+                self.clearCell(x, y, fixGrid=False)
+
+            self.drawGrid()
+
         else:
             self.board, self.solution = self.GeneratedBoard(self.diff)
-        self.temp, self.originalBoard = deepcopy(self.board), deepcopy(self.board)
+
+        self.temp = deepcopy(self.board)
+        self.solved = []
 
         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
         self.drawGrid(placeNums=True)
