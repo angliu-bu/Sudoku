@@ -1,5 +1,3 @@
-# this is a game for sovling sodoku.
-
 import random
 from collections import defaultdict
 from copy import deepcopy
@@ -10,7 +8,6 @@ white = (211, 211, 211)
 red = (255, 0, 0)
 green = (21, 119, 40)
 orange = (200, 100, 0)
-
 
 class Game:
 
