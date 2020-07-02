@@ -3,41 +3,31 @@ from collections import defaultdict
 from copy import deepcopy
 import pygame
 
+# Start the game
+pygame.init()
+
+# Colors
 black = (0, 0, 0)
 white = (211, 211, 211)
 red = (255, 0, 0)
 green = (21, 119, 40)
 orange = (200, 100, 0)
 
+# Fonts
+font26 = pygame.font.Font(None, 26)
+font20 = pygame.font.Font(None, 20)
+
 
 class Game:
 
     def __init__(self, diff='medium'):
-        # example of a board
-        # self.board = [[".", ".", "9", "7", "4", "8", ".", ".", "."], ["7", ".", ".", ".", ".", ".", ".", ".", "."],
-        #               [".", "2", ".", "1", ".", "9", ".", ".", "."], [".", ".", "7", ".", ".", ".", "2", "4", "."],
-        #               [".", "6", "4", ".", "1", ".", "5", "9", "."], [".", "9", "8", ".", ".", ".", "3", ".", "."],
-        #               [".", ".", ".", "8", ".", "3", ".", "2", "."], [".", ".", ".", ".", ".", ".", ".", ".", "6"],
-        #               [".", ".", ".", "2", "7", "5", "9", ".", "."]]
-        # self.solution = [["5", "1", "9", "7", "4", "8", "6", "3", "2"], ["7", "8", "3", "6", "5", "2", "4", "1", "9"],
-        #                  ["4", "2", "6", "1", "3", "9", "8", "7", "5"], ["3", "5", "7", "9", "8", "6", "2", "4", "1"],
-        #                  ["2", "6", "4", "3", "1", "7", "5", "9", "8"], ["1", "9", "8", "5", "2", "4", "3", "6", "7"],
-        #                  ["9", "7", "5", "8", "6", "3", "1", "2", "4"], ["8", "3", "2", "4", "9", "1", "7", "5", "6"],
-        #                  ["6", "4", "1", "2", "7", "5", "9", "8", "3"]]
+
+        # Set up parameters
         self.time = 0
-        self.diff = diff  # set the difficulty of the game
+        self.diff = diff  # Game difficulty
         self.board, self.solution = self.GeneratedBoard(self.diff)
-        self.temp = deepcopy(self.board)
-        self.solved = []
-
-
-
-        # Start the game
-        pygame.init()
-
-        # Fonts
-        self.font26 = pygame.font.Font(None, 26)
-        self.font20 = pygame.font.Font(None, 20)
+        self.temp = defaultdict(str)
+        self.solved = set()
 
         # Create window
         self.window = pygame.display.set_mode(size=(550, 550))
@@ -45,7 +35,10 @@ class Game:
         pygame.display.set_caption("Sudoku")
         pygame.display.flip()
 
+        # Draw GUI and place numbers
         self.drawGrid(placeNums=True)
+
+        # Start the game
         self.run()
 
     # Color buttons according to difficulty selection
@@ -54,22 +47,22 @@ class Game:
         diffToIndex = {'easy': 0, 'medium': 1, 'hard': 2}
         colors[diffToIndex[choice]] = green
 
-        easyText = self.font26.render("Easy", True, black, colors[0])
+        easyText = font26.render("Easy", True, black, colors[0])
         easyRect = easyText.get_rect(center=(215, 520))
         self.window.blit(easyText, easyRect)
 
-        medText = self.font26.render("Medium", True, black, colors[1])
+        medText = font26.render("Medium", True, black, colors[1])
         medRect = medText.get_rect(center=(275, 520))
         self.window.blit(medText, medRect)
 
-        hardText = self.font26.render("Hard", True, black, colors[2])
+        hardText = font26.render("Hard", True, black, colors[2])
         hardRect = hardText.get_rect(center=(335, 520))  # (350, 520)
         self.window.blit(hardText, hardRect)
 
     # Run the game, and display game on the GUI
     def run(self):
         # Set up buttons
-        restartText = self.font26.render("Restart", True, black, orange)
+        restartText = font26.render("Restart", True, black, orange)
         restartRect = restartText.get_rect(center=(80, 520))
         self.window.blit(restartText, restartRect)
         self.colorButtons(self.diff)
@@ -126,13 +119,13 @@ class Game:
                         self.pencil(num + 1, x, y)
 
                 # Check for delete
-                if keys[pygame.K_DELETE] and self.temp[x][y] != '.':
+                if keys[pygame.K_DELETE] and self.temp[(x, y)] != '':
                     self.clearCell(x, y)
                     self.select(x, y)
 
                 # Confirm selection
-                if keys[pygame.K_RETURN] and self.temp[x][y] == self.solution[x][y]:
-                    self.write(self.temp[x][y], x, y)
+                if keys[pygame.K_RETURN] and self.temp[(x, y)] == self.solution[x][y]:
+                    self.write(self.temp[(x, y)], x, y)
                     selected = False
 
                 if keys[pygame.K_LEFT] and y > 0:
@@ -196,7 +189,7 @@ class Game:
                 secs = '0' + secs
 
             pygame.draw.rect(self.window, white, (430, 505, 100, 50))
-            text = self.font26.render(mins + ':' + secs, True, black, white)
+            text = font26.render(mins + ':' + secs, True, black, white)
             textRect = text.get_rect(center=(480, 520))
             self.window.blit(text, textRect)
 
@@ -222,7 +215,7 @@ class Game:
             for x, row in enumerate(self.board):
                 for y, value in enumerate(row):
                     if value != '.':
-                        text = self.font26.render(self.board[x][y], True, black, white)
+                        text = font26.render(self.board[x][y], True, black, white)
                         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
                         self.window.blit(text, textRect)
 
@@ -239,20 +232,20 @@ class Game:
             self.drawGrid()  # CleanUp any problems with the border
 
     def pencil(self, val, x, y):
-        self.temp[x][y] = str(val)
+        self.temp[(x, y)] = str(val)
         self.clearCell(x, y)
         self.select(x, y)
 
-        text = self.font20.render(self.temp[x][y], True, black, white)
+        text = font20.render(self.temp[(x, y)], True, black, white)
         textRect = text.get_rect(center=((y * 50) + 63, (x * 50) + 64))
         self.window.blit(text, textRect)
 
     def write(self, val, x, y, color=black):
         self.clearCell(x, y)
         self.board[x][y] = val
-        self.solved.append((x, y))
+        self.solved.add((x, y))
 
-        text = self.font26.render(val, True, color, white)
+        text = font26.render(val, True, color, white)
         textRect = text.get_rect(center=((y * 50) + 75, (x * 50) + 75))
         self.window.blit(text, textRect)
 
@@ -268,8 +261,8 @@ class Game:
         else:
             self.board, self.solution = self.GeneratedBoard(self.diff)
 
-        self.temp = deepcopy(self.board)
-        self.solved = []
+        self.temp = defaultdict(str)
+        self.solved = set()
 
         pygame.draw.rect(self.window, white, (50, 50, 450, 450))
         self.drawGrid(placeNums=True)
@@ -287,21 +280,14 @@ class Game:
                     cols[c].add(val)
                     blocks[(r // 3, c // 3)].add(val)
 
+        def isValid(d, r, c):
+            return d not in rows[r] and d not in cols[c] and d not in blocks[(r // 3, c // 3)]
+
         def get_choices(r, c):
-            choices = []
-            for d in '123456789':
-                if d not in rows[r] and d not in cols[c] and d not in blocks[(r // 3, c // 3)]:
-                    choices.append(d)
-            return choices
+            return [d for d in '123456789' if isValid(d, r, c)]
 
         def get_empty_cell():
-            empty = []
-            for r in range(9):
-                for c in range(9):
-                    if self.board[r][c] == '.':
-                        choices = get_choices(r, c)
-                        empty.append((r, c, choices))
-
+            empty = [(r, c, get_choices(r, c)) for r in range(9) for c in range(9) if self.board[r][c] == '.']
             return min(empty, key=lambda x: len(x[2])) if empty else None
 
         def fill(r, c, v):
@@ -345,27 +331,21 @@ class Game:
 
         solve_board()
 
-    def GeneratedBoard(self, d='medium'):
+    def GeneratedBoard(self, diff):
 
         difficulty = {'easy': 4, 'medium': 5, 'hard': 7}
         count = 81
         board = [['.' for _ in range(9)] for _ in range(9)]
         rows, cols, blocks = defaultdict(set), defaultdict(set), defaultdict(set)
 
+        def isValid(d, r, c):
+            return d not in rows[r] and d not in cols[c] and d not in blocks[(r // 3, c // 3)]
+
         def get_choices(r, c):
-            choices = []
-            for d in '123456789':
-                if d not in rows[r] and d not in cols[c] and d not in blocks[(r // 3, c // 3)]:
-                    choices.append(d)
-            return choices
+            return [d for d in '123456789' if isValid(d, r, c)]
 
         def get_empty_cell():
-            empty = []
-            for r in range(9):
-                for c in range(9):
-                    if board[r][c] == '.':
-                        choices = get_choices(r, c)
-                        empty.append((r, c, choices))
+            empty = [(r, c, get_choices(r, c)) for r in range(9) for c in range(9) if board[r][c] == '.']
             return min(empty, key=lambda x: len(x[2])) if empty else None
 
         while count > 0:
@@ -390,7 +370,7 @@ class Game:
         solution = deepcopy(board)
 
         for r in range(9):
-            columns = random.sample(list(range(9)), difficulty[d])
+            columns = random.sample(list(range(9)), difficulty[diff])
             for c in columns:
                 board[r][c] = '.'
         return board, solution
