@@ -361,6 +361,7 @@ class Game:
                     count -= 1
 
                 else:
+                    # Board created is invalid, restart
                     count = 81
                     board = [['.' for _ in range(9)] for _ in range(9)]
                     rows = defaultdict(set)
