@@ -1,4 +1,4 @@
-This is a Sudoku game implemented by Zhuofa Chen and Ang Liu. 
+This is a Sudoku game implemented by Zhuofa Chen and Ang Liu, Jilin Wang and Zhihao Sun. 
 
 The Game has the following controls:
  - ESC -------------------- closes game
